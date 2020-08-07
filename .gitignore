@@ -41,3 +41,7 @@ yarn-debug.log*
 
 # Ignore idea files
 .idea
+
+# Test Coverage
+coverage/*
+yarn.lock
