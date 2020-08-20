@@ -1,12 +1,11 @@
 class UsersController < ApplicationController
-  before_action :authorized, only: [:auto_login]
 
   def index
     result =
       if current_user
-        { user: User.all.map(&:public_fields), message: 'Success', status: :success }
+        { user: current_user, message: 'Success', status: :success }
       else
-        { message: 'Please sign_up or log in', status: :error }
+        { message: 'Please Signup or login', status: :error }
       end
 
     render json: result
@@ -17,7 +16,7 @@ class UsersController < ApplicationController
       if current_user
         { user: current_user.public_fields, message: 'Success', status: :success }
       else
-        { message: 'Please sign_up or log in', status: :error }
+        { message: 'Please Signup or login', status: :error }
       end
 
     render json: result
@@ -29,27 +28,13 @@ class UsersController < ApplicationController
 
   def create
     @user = User.create(user_params)
-    if @user.valid?
+    if @user.save
       token = encode_token({ user_id: @user.id })
+      session[:token] = token
       render json: { user: @user, token: token }
     else
-      render json: { error: 'Invalid email or password' }
+      render 'new'
     end
-  end
-
-  def login
-    @user = User.find_by(name: params[:name])
-
-    if @user&.authenticate(params[:password])
-      token = encode_token({ user_id: @user.id })
-      render json: { user: @user, token: token }
-    else
-      render json: { error: 'Invalid email or password' }
-    end
-  end
-
-  def auto_login
-    render json: @user
   end
 
   def destroy

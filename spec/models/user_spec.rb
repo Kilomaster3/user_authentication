@@ -21,6 +21,22 @@ RSpec.describe User, type: :model do
       end
     end
 
+    context 'up to case' do
+      let(:email) { FactoryBot.create(:user, email: 'TEST@EXAMPLE.ORG') }
+
+      it 'reject email addresses identical up to case' do
+        expect(email).to be_valid
+      end
+
+      it 'accept valid email addresses' do
+        addresses = %w[member@foo.com THE_USER@foo.bar.org first.last@foo.jp]
+        addresses.each do |address|
+          valid_email_user = FactoryBot.build(:user, email: address)
+          expect(valid_email_user).to be_valid
+        end
+      end
+    end
+
     context 'valid' do
       it 'with email and password' do
         expect(user).to be_valid
