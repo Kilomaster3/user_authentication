@@ -1,0 +1,23 @@
+<h1>All Users</h1>
+
+<table>
+  <thead>
+  <tr>
+    <th>Email</th>
+    <th>Name</th>
+    <th>Surname</th>
+    <th colspan="5"></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @users.each do |user| %>
+    <tr>
+      <td colspan = '2'><%= user.email %></td>
+      <td><%= user.name %></td>
+      <td><%= user.surname %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+<br>

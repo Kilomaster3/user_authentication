@@ -13,6 +13,16 @@ RSpec.describe UsersController, type: :controller do
     end
   end
 
+  describe '#show' do
+    context 'when unauthenticated' do
+      it 'Check if user Login' do
+        get :show, params: { id: user.id }
+        expect(response).to redirect_to login_path
+        expect(flash[:notice]).to eq 'Please Login'
+      end
+    end
+  end
+
   describe '#create' do
 
     let(:user_params) do
@@ -22,11 +32,6 @@ RSpec.describe UsersController, type: :controller do
         email: Faker::Internet.email }
     end
 
-    it 'response success' do
-      post :create, params: { user: user_params }
-      expect(response).to have_http_status(:success)
-    end
-
     it 'create user' do
       expect { post :create, params: { user: user_params } }.to change(User, :count).by(1)
     end
@@ -34,7 +39,7 @@ RSpec.describe UsersController, type: :controller do
     describe '.authenticate' do
 
       context 'when valid params' do
-        it 'Check user session by email' do
+        it 'Check user sessions by email' do
           post :create, params: { user: user_params }
           token = @request.session[:token]
           user_id = JsonWebToken.decoded_token(token)[0]['user_id']
@@ -43,7 +48,7 @@ RSpec.describe UsersController, type: :controller do
           expect(user.email).to eq user_params[:email]
         end
 
-        it 'Check user session by name' do
+        it 'Check user sessions by name' do
           post :create, params: { user: user_params }
           token = @request.session[:token]
           user_id = JsonWebToken.decoded_token(token)[0]['user_id']
@@ -52,7 +57,7 @@ RSpec.describe UsersController, type: :controller do
           expect(user.name).to eq user_params[:name]
         end
 
-        it 'Check user session by surname' do
+        it 'Check user sessions by surname' do
           post :create, params: { user: user_params }
           token = @request.session[:token]
           user_id = JsonWebToken.decoded_token(token)[0]['user_id']
