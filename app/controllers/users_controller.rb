@@ -3,12 +3,10 @@ class UsersController < ApplicationController
 
   def index
     @users = User.all
-    render json: @users
   end
 
   def show
     @user = current_user
-    render json: @user
   end
 
   def new
@@ -16,20 +14,20 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = User.create(user_params)
+    @user = User.new(user_params)
     if @user.save
+      flash[:success] = 'Welcome into your Page'
       session[:token] = JsonWebToken.encode_token({ user_id: @user.id })
-      render json: { user: @user }
+      redirect_to @user
     else
       render 'new'
     end
   end
 
-  
   private
 
   def unauthenticated_user
-    redirect_back(fallback_location: '/sign_up') unless logged_in?
+    redirect_back(fallback_location: '/login', notice: 'Please Login') unless logged_in?
   end
 
   def user_params
